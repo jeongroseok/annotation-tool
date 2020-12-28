@@ -1,46 +1,49 @@
 import { listVal, objectVal } from "rxfire/database";
 
-import { Observable } from "rxjs";
 import { firebase } from "./firebase";
 
-export function createDatasetDetail(
-  datasetDetail: DatasetDetail
-): Pick<Promise<any>, "then" | "catch"> {
-  return firebase
-    .database()
-    .ref("/datasetDetails")
-    .push({
-      ...datasetDetail,
-      createdAt: firebase.database.ServerValue.TIMESTAMP,
-      updatedAt: firebase.database.ServerValue.TIMESTAMP,
-    });
+export interface DatasetDetail {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: number;
+  updatedAt: number;
+  categories: string[];
 }
 
-export function updateDatasetDetail(datasetDetail: DatasetDetail) {
-  if (datasetDetail.id) {
-    return firebase
-      .database()
-      .ref("/datasetDetails")
-      .child(datasetDetail.id)
-      .update({
-        ...datasetDetail,
-        updatedAt: firebase.database.ServerValue.TIMESTAMP,
-      });
-  } else {
-    throw "missing id";
-  }
+export function createDatasetDetail({
+  name,
+  description,
+  categories,
+}: Pick<DatasetDetail, "name" | "description" | "categories">): Pick<
+  Promise<any>,
+  "then" | "catch"
+> {
+  return firebase.database().ref("/datasetDetails").push({
+    name,
+    description,
+    categories,
+    createdAt: firebase.database.ServerValue.TIMESTAMP,
+    updatedAt: firebase.database.ServerValue.TIMESTAMP,
+  });
 }
 
-export function deleteDatasetDetail(datasetDetail: DatasetDetail) {
-  if (datasetDetail.id) {
-    return firebase
-      .database()
-      .ref("/datasetDetails")
-      .child(datasetDetail.id)
-      .remove();
-  } else {
-    throw "missing id";
-  }
+export function updateDatasetDetail({
+  id,
+  name,
+  description,
+  categories,
+}: Partial<Omit<DatasetDetail, "id">> & Pick<DatasetDetail, "id">) {
+  return firebase.database().ref("/datasetDetails").child(id).update({
+    name,
+    description,
+    categories,
+    updatedAt: firebase.database.ServerValue.TIMESTAMP,
+  });
+}
+
+export function deleteDatasetDetail({ id }: Pick<DatasetDetail, "id">) {
+  return firebase.database().ref("/datasetDetails").child(id).remove();
 }
 
 export function getDatasetDetail(id: string) {
@@ -55,13 +58,4 @@ export function listDatasetDetail() {
     firebase.database().ref("/datasetDetails"),
     "id"
   );
-}
-
-export interface DatasetDetail {
-  id?: string;
-  name?: string;
-  description?: string;
-  createdAt?: number;
-  updatedAt?: number;
-  categories?: string[];
 }

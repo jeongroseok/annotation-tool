@@ -1,18 +1,57 @@
 import {
-  DatasetBase,
   DatasetDetail,
-  ImageDataset,
+  ImageDatasetItem,
+  deleteDatasetItem,
+  getDataset,
   getDatasetItem,
+  listDatasetDetail,
 } from "./services";
 import React, { useEffect, useState } from "react";
+import { listVal, objectVal } from "rxfire/database";
 
 export default function Test() {
-  const [val, setVal] = useState<ImageDataset>();
+  const [list, setList] = useState<ImageDatasetItem[]>();
+  const [value, setValue] = useState<ImageDatasetItem>();
   useEffect(() => {
-    getDatasetItem<ImageDataset>("-MJRe27mU0AMT8vn387r", "0").subscribe(setVal);
+    getDataset<ImageDatasetItem>("-MPd8MPujnn9fI6L-Imc").subscribe(setList);
+    getDatasetItem<ImageDatasetItem>(
+      "-MPd8MPujnn9fI6L-Imc",
+      "-MPeSwtkTqu81zQb4KDe"
+    ).subscribe(setValue);
+    // (async () => {
+    //   const newDatasetDetail: Pick<
+    //     DatasetDetail,
+    //     "name" | "description" | "categories"
+    //   > = {
+    //     name: "더미 데이터셋",
+    //     description: "더미 데이터셋 입니다.",
+    //     categories: ["사람", "기타"],
+    //   };
+    //   await createDatasetDetail(newDatasetDetail);
+    // })();
   }, []);
-  useEffect(() => {
-    console.log(val);
-  }, [val]);
-  return <div>test</div>;
+  const o: Pick<ImageDatasetItem, "url" | "width" | "height"> = {
+    url: "test url",
+    width: 123,
+    height: 123,
+  };
+  return (
+    <div>
+      <ul>
+        {list &&
+          list.map((item) => (
+            <li
+              key={item.id}
+              onClick={() => {
+                console.log(item);
+                deleteDatasetItem(item);
+              }}
+            >
+              {item.id}
+            </li>
+          ))}
+      </ul>
+      <div>{value && JSON.stringify(value)}</div>
+    </div>
+  );
 }

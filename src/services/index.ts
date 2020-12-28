@@ -9,3 +9,4 @@ export * from "./datasetItem";
 export * from "./datasetItemTypes";
 export * from "./annotation";
 export * from "./annotationTypes";
+export * from "./firebase";

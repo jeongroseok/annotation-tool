@@ -1,15 +1,15 @@
-import type { DatasetDetail } from "./datasetDetail";
-
 export interface DatasetItemBase {
+  datasetId: string;
   id: string;
-  datasetDetail: DatasetDetail;
+  createdAt: number;
+  updatedAt: number;
 }
 
-export interface ImageItemDataset extends DatasetItemBase {
+export interface ImageDatasetItem extends DatasetItemBase {
   url: string;
   width: number;
   height: number;
 }
 
-export interface VideoItemDataset extends DatasetItemBase {}
-export interface TextItemDataset extends DatasetItemBase {}
+export interface VideoDatasetItem extends DatasetItemBase {}
+export interface TextDatasetItem extends DatasetItemBase {}

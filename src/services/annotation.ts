@@ -4,48 +4,54 @@ import type { AnnotationBase } from "./annotationTypes";
 import { Observable } from "rxjs";
 import { firebase } from "./firebase";
 
-export function createAnnotation<T extends AnnotationBase>(
-  annotation: T
-): Pick<Promise<any>, "then" | "catch"> {
-  if (annotation.datasetId && annotation.datasetItemId) {
-    return firebase
-      .database()
-      .ref("/annotations")
-      .push({
-        ...annotation,
-        createdAt: firebase.database.ServerValue.TIMESTAMP,
-        updatedAt: firebase.database.ServerValue.TIMESTAMP,
-      });
-  } else {
-    throw "missing id";
-  }
+export function createAnnotation<T extends AnnotationBase>({
+  datasetId,
+  datasetItemId,
+  ...annotationData
+}: Omit<T, "id" | "createdAt" | "updatedAt">): Pick<
+  Promise<any>,
+  "then" | "catch"
+> {
+  return firebase
+    .database()
+    .ref("/annotations")
+    .child(datasetId)
+    .child(datasetItemId)
+    .push({
+      datasetId,
+      datasetItemId,
+      ...annotationData,
+      createdAt: firebase.database.ServerValue.TIMESTAMP,
+      updatedAt: firebase.database.ServerValue.TIMESTAMP,
+    });
 }
 
-export function updateAnnotation<T extends AnnotationBase>(annotation: T) {
-  if (annotation.id) {
-    return firebase
-      .database()
-      .ref("/annotations")
-      .child(annotation.id)
-      .update({
-        ...annotation,
-        updatedAt: firebase.database.ServerValue.TIMESTAMP,
-      });
-  } else {
-    throw "missing id";
-  }
+export function updateAnnotation<T extends AnnotationBase>(
+  annotation: Partial<Omit<T, "id" | "datasetId" | "datasetItemId">> &
+    Pick<T, "id" | "datasetId" | "datasetItemId">
+) {
+  const {
+    datasetId,
+    datasetItemId,
+    id,
+    createdAt,
+    updatedAt,
+    ...rest
+  } = annotation;
+  return firebase
+    .database()
+    .ref("/annotations")
+    .child(datasetId)
+    .child(datasetItemId)
+    .child(id)
+    .update({
+      ...rest,
+      updatedAt: firebase.database.ServerValue.TIMESTAMP,
+    });
 }
 
 export function deleteAnnotation<T extends AnnotationBase>(annotation: T) {
-  if (annotation.id) {
-    return firebase
-      .database()
-      .ref("/annotations")
-      .child(annotation.id)
-      .remove();
-  } else {
-    throw "missing id";
-  }
+  return firebase.database().ref("/annotations").child(annotation.id).remove();
 }
 
 export function getAnnotationById<T extends AnnotationBase>(id: string) {
