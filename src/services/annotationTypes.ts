@@ -12,10 +12,10 @@ export interface AnnotationBase {
   datasetItemId: string;
   createdAt: number;
   updatedAt: number;
-  annotator: number;
+  annotator: string;
   state: AnnotationState;
 }
 
 export interface BoundingBoxAnnotation extends AnnotationBase {
-  boundingBoxes: { x: number; y: number; width: number; height: number };
+  boundingBoxes: [{ x: number; y: number; width: number; height: number }];
 }

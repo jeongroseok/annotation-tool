@@ -1,53 +1,84 @@
 import {
+  AnnotationState,
+  BoundingBoxAnnotation,
   DatasetDetail,
   ImageDatasetItem,
+  createAnnotation,
+  deleteAnnotation,
   deleteDatasetItem,
+  findAnnotationsByAnnotator,
+  getAnnotation,
   getDataset,
-  getDatasetItem,
-  listDatasetDetail,
+  listAnnotation,
+  updateAnnotation,
 } from "./services";
 import React, { useEffect, useState } from "react";
 import { listVal, objectVal } from "rxfire/database";
 
 export default function Test() {
-  const [list, setList] = useState<ImageDatasetItem[]>();
-  const [value, setValue] = useState<ImageDatasetItem>();
+  const [items, setItems] = useState<ImageDatasetItem[]>();
+  const [annotations, setAnnotations] = useState<BoundingBoxAnnotation[]>();
+  const [selectedItem, setSelectedItem] = useState<ImageDatasetItem>();
+  const [value, setValue] = useState<BoundingBoxAnnotation[]>();
   useEffect(() => {
-    getDataset<ImageDatasetItem>("-MPd8MPujnn9fI6L-Imc").subscribe(setList);
-    getDatasetItem<ImageDatasetItem>(
+    getDataset<ImageDatasetItem>("-MPd8MPujnn9fI6L-Imc").subscribe(setItems);
+    findAnnotationsByAnnotator<BoundingBoxAnnotation>(
       "-MPd8MPujnn9fI6L-Imc",
-      "-MPeSwtkTqu81zQb4KDe"
+      "-MPeSwtkTqu81zQb4KDe",
+      "작업자"
     ).subscribe(setValue);
-    // (async () => {
-    //   const newDatasetDetail: Pick<
-    //     DatasetDetail,
-    //     "name" | "description" | "categories"
-    //   > = {
-    //     name: "더미 데이터셋",
-    //     description: "더미 데이터셋 입니다.",
-    //     categories: ["사람", "기타"],
-    //   };
-    //   await createDatasetDetail(newDatasetDetail);
-    // })();
   }, []);
-  const o: Pick<ImageDatasetItem, "url" | "width" | "height"> = {
-    url: "test url",
-    width: 123,
-    height: 123,
-  };
+  useEffect(() => {
+    if (!selectedItem) return;
+    listAnnotation<BoundingBoxAnnotation>(
+      selectedItem.datasetId,
+      selectedItem.id
+    ).subscribe(setAnnotations);
+  }, [selectedItem]);
+  const create = (datasetId: string, datasetItemId: string) =>
+    ({
+      id: "asdf",
+      datasetId: datasetId,
+      datasetItemId: datasetItemId,
+      annotator: "작업자",
+      state: AnnotationState.NotStarted,
+      boundingBoxes: [{ x: 0, y: 0, width: 100, height: 100 }],
+    } as BoundingBoxAnnotation);
   return (
     <div>
+      <h4>items {selectedItem?.id}</h4>
       <ul>
-        {list &&
-          list.map((item) => (
+        {items &&
+          items.map((item) => (
+            <li key={item.id} onClick={() => setSelectedItem(item)}>
+              {item.id}
+              <button
+                onClick={() => {
+                  createAnnotation<BoundingBoxAnnotation>(
+                    create(item.datasetId, item.id)
+                  );
+                }}
+              >
+                new
+              </button>
+            </li>
+          ))}
+      </ul>
+      <h4>annotations</h4>
+      <ul>
+        {annotations &&
+          annotations.map((item) => (
             <li
               key={item.id}
               onClick={() => {
                 console.log(item);
-                deleteDatasetItem(item);
+                updateAnnotation({
+                  ...item,
+                  boundingBoxes: [{ ...item.boundingBoxes[0], x: 100 }],
+                } as BoundingBoxAnnotation);
               }}
             >
-              {item.id}
+              {item.annotator}
             </li>
           ))}
       </ul>

@@ -1,26 +1,21 @@
 import { listVal, objectVal } from "rxfire/database";
+import { map, switchMap } from "rxjs/operators";
 
 import type { AnnotationBase } from "./annotationTypes";
 import { Observable } from "rxjs";
 import { firebase } from "./firebase";
 
-export function createAnnotation<T extends AnnotationBase>({
-  datasetId,
-  datasetItemId,
-  ...annotationData
-}: Omit<T, "id" | "createdAt" | "updatedAt">): Pick<
-  Promise<any>,
-  "then" | "catch"
-> {
+export function createAnnotation<T extends AnnotationBase>(
+  annotation: Omit<T, "id" | "createdAt" | "updatedAt">
+): Pick<Promise<any>, "then" | "catch"> {
+  const { datasetId, datasetItemId, ...rest } = annotation;
   return firebase
     .database()
     .ref("/annotations")
     .child(datasetId)
     .child(datasetItemId)
     .push({
-      datasetId,
-      datasetItemId,
-      ...annotationData,
+      ...rest,
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       updatedAt: firebase.database.ServerValue.TIMESTAMP,
     });
@@ -50,30 +45,52 @@ export function updateAnnotation<T extends AnnotationBase>(
     });
 }
 
-export function deleteAnnotation<T extends AnnotationBase>(annotation: T) {
-  return firebase.database().ref("/annotations").child(annotation.id).remove();
+export function deleteAnnotation<T extends AnnotationBase>(
+  annotation: Pick<T, "id" | "datasetId" | "datasetItemId">
+) {
+  return firebase
+    .database()
+    .ref("/annotations")
+    .child(annotation.datasetId)
+    .child(annotation.datasetItemId)
+    .child(annotation.id)
+    .remove();
 }
 
-export function getAnnotationById<T extends AnnotationBase>(id: string) {
-  return objectVal<T>(firebase.database().ref("/annotations").child(id), "id");
-}
-
-export function findAnnotation<T extends AnnotationBase>(
+export function getAnnotation<T extends AnnotationBase>(
   datasetId: string,
   datasetItemId: string,
-  annotatorId: string
+  annotationId: string
 ) {
   return objectVal<T>(
     firebase
       .database()
       .ref("/annotations")
-      .orderByChild("datasetItemId")
-      .equalTo(datasetItemId)
-      .orderByChild("annotatorId")
-      .equalTo(annotatorId)
-      .orderByChild("datasetId")
-      .equalTo(datasetId),
+      .child(datasetId)
+      .child(datasetItemId)
+      .child(annotationId),
     "id"
+  ).pipe(map((value) => ({ ...value, datasetId, datasetItemId })));
+}
+
+export function findAnnotationsByAnnotator<T extends AnnotationBase>(
+  datasetId: string,
+  datasetItemId: string,
+  annotator: string
+) {
+  return listVal<T>(
+    firebase
+      .database()
+      .ref("/annotations")
+      .child(datasetId)
+      .child(datasetItemId)
+      .orderByChild("annotator")
+      .equalTo(annotator),
+    "id"
+  ).pipe(
+    map((values) =>
+      values.map((value) => ({ ...value, datasetId, datasetItemId }))
+    )
   );
 }
 
@@ -85,10 +102,12 @@ export function listAnnotation<T extends AnnotationBase>(
     firebase
       .database()
       .ref("/annotations")
-      .orderByChild("datasetId")
-      .equalTo(datasetId)
-      .orderByChild("datasetItemId")
-      .equalTo(datasetItemId),
+      .child(datasetId)
+      .child(datasetItemId),
     "id"
+  ).pipe(
+    map((values) =>
+      values.map((value) => ({ ...value, datasetId, datasetItemId }))
+    )
   );
 }
