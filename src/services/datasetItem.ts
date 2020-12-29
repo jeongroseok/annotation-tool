@@ -1,8 +1,8 @@
 import { listVal, objectVal } from "rxfire/database";
-import { map, switchMap } from "rxjs/operators";
 
 import type { DatasetItemBase } from "./datasetItemTypes";
 import { firebase } from "./firebase";
+import { map } from "rxjs/operators";
 
 export function createDataset<T extends DatasetItemBase>(
   datasetId: string,
@@ -10,9 +10,10 @@ export function createDataset<T extends DatasetItemBase>(
 ): Pick<Promise<any>, "then" | "catch"> {
   const ref = firebase.database().ref("/datasets").child(datasetId);
   const dataset: any = {};
+
   datasetItems.forEach((item) => {
     const id = ref.push().key;
-    if (!id) throw "key generation error";
+    if (!id) throw new Error("key generation error");
     const datasetItem: any = {
       ...item,
       createdAt: firebase.database.ServerValue.TIMESTAMP,
@@ -21,7 +22,23 @@ export function createDataset<T extends DatasetItemBase>(
     delete datasetItem.id;
     dataset[id] = datasetItem;
   });
-  return ref.update(dataset);
+
+  return ref.set(dataset);
+}
+
+export function createDatasetItem<T extends DatasetItemBase>(
+  datasetId: string,
+  datasetItem: Omit<T, "id" | "datasetId" | "createdAt" | "updatedAt">
+): Pick<Promise<any>, "then" | "catch"> {
+  return firebase
+    .database()
+    .ref("/datasets")
+    .child(datasetId)
+    .push({
+      ...datasetItem,
+      createdAt: firebase.database.ServerValue.TIMESTAMP,
+      updatedAt: firebase.database.ServerValue.TIMESTAMP,
+    });
 }
 
 export function updateDatasetItem<T extends DatasetItemBase>(
@@ -48,7 +65,9 @@ export function deleteDatasetItem<T extends DatasetItemBase>(datasetItem: T) {
     .remove();
 }
 
-export function getDataset<T extends DatasetItemBase>(datasetId: string) {
+export function getAllDatasetItems<T extends DatasetItemBase>(
+  datasetId: string
+) {
   return listVal<T>(
     firebase.database().ref("/datasets").child(datasetId),
     "id"

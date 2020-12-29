@@ -1,6 +1,7 @@
 import { Button, Form } from "react-bootstrap";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import type { DatasetDetail } from "../../../services";
 import React from "react";
 
 export interface DatasetDetailFormProps {
@@ -8,12 +9,9 @@ export interface DatasetDetailFormProps {
   onSubmit: SubmitHandler<DatasetDetailFormData>;
 }
 
-export interface DatasetDetailFormData {
-  name?: string;
-  description?: string;
-  items?: string;
-  categories?: string;
-}
+export type DatasetDetailFormData = Partial<
+  Omit<DatasetDetail, "id" | "createdAt" | "updatedAt">
+>;
 
 export default function DataDetailForm({
   defaultValues,
@@ -36,10 +34,6 @@ export default function DataDetailForm({
           name="description"
           ref={register}
         />
-      </Form.Group>
-      <Form.Group controlId="items">
-        <Form.Label>Items</Form.Label>
-        <Form.Control as="textarea" rows={10} name="items" ref={register} />
       </Form.Group>
       <Form.Group controlId="categories">
         <Form.Label>Categories(json format)</Form.Label>

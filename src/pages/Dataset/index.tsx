@@ -1,11 +1,11 @@
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 
 import { Container } from "react-bootstrap";
+import DatasetCreate from "./DatasetCreate";
 import DatasetDetail from "./DatasetDetail";
 import DatasetList from "./DatasetList";
 import React from "react";
 
-// import CreatePage from "./CreatePage";
 export interface MatchParams {
   id: string;
 }
@@ -19,7 +19,7 @@ export default function Dataset() {
         <Route exact path={match.path}>
           <DatasetList />
         </Route>
-        {/* <Route path={`${match.path}/create`} component={CreatePage} /> */}
+        <Route path={`${match.path}/create`} component={DatasetCreate} />
         <Route path={`${match.path}/:id`}>
           <DatasetDetail />
         </Route>

@@ -1,17 +1,16 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 
-// import App from "./App";
+import App from "./App";
 import React from "react";
 import ReactDOM from "react-dom";
 import { RecoilRoot } from "recoil";
-import Test from "./Test";
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
       <React.Suspense fallback={<div>Loading...</div>}>
-        <Test />
+        <App />
       </React.Suspense>
     </RecoilRoot>
   </React.StrictMode>,

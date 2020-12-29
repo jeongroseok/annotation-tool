@@ -3,12 +3,16 @@ import React, { useCallback } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 import List from "./List";
-import { useDatasetList } from "../hooks";
+import { useDatasetDetailList } from "../hooks";
 
 export default function DatasetList() {
   const match = useRouteMatch();
   const history = useHistory();
-  const [datasets] = useDatasetList();
+  const [datasetDetails] = useDatasetDetailList();
+
+  const handleCreate = useCallback(() => {
+    history.push(`${match.url}/create`);
+  }, []);
 
   const handleEdit = useCallback((item) => {
     history.push(`${match.url}/${item.id}`);
@@ -25,10 +29,14 @@ export default function DatasetList() {
         <Breadcrumb.Item>데이터셋 관리</Breadcrumb.Item>
         <Breadcrumb.Item active>데이터셋 목록</Breadcrumb.Item>
       </Breadcrumb>
-      <Button variant="primary" onClick={() => alert("not impl")}>
+      <Button variant="primary" onClick={handleCreate}>
         New
       </Button>
-      <List items={datasets} onEdit={handleEdit} onSelect={handleSelect} />
+      <List
+        items={datasetDetails}
+        onEdit={handleEdit}
+        onSelect={handleSelect}
+      />
     </>
   );
 }

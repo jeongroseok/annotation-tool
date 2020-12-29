@@ -3,22 +3,18 @@ import { listVal, objectVal } from "rxfire/database";
 import { firebase } from "./firebase";
 
 export interface DatasetDetail {
-  id: string;
+  readonly id: string;
   name: string;
   description: string;
-  createdAt: number;
-  updatedAt: number;
+  readonly createdAt: number;
+  readonly updatedAt: number;
   categories: string[];
 }
 
-export function createDatasetDetail({
-  name,
-  description,
-  categories,
-}: Pick<DatasetDetail, "name" | "description" | "categories">): Pick<
-  Promise<any>,
-  "then" | "catch"
-> {
+export function createDatasetDetail(
+  datasetDetail: Pick<DatasetDetail, "name" | "description" | "categories">
+): Pick<Promise<any>, "then" | "catch"> {
+  const { name, description, categories } = datasetDetail;
   return firebase.database().ref("/datasetDetails").push({
     name,
     description,

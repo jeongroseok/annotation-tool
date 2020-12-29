@@ -1,9 +1,8 @@
 import { listVal, objectVal } from "rxfire/database";
-import { map, switchMap } from "rxjs/operators";
 
 import type { AnnotationBase } from "./annotationTypes";
-import { Observable } from "rxjs";
 import { firebase } from "./firebase";
+import { map } from "rxjs/operators";
 
 export function createAnnotation<T extends AnnotationBase>(
   annotation: Omit<T, "id" | "createdAt" | "updatedAt">

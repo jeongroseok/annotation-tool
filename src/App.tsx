@@ -11,9 +11,9 @@ import { userState } from "./states";
 // 게임에서 main.cpp와 동일? => service와 manager생성
 export default function App() {
   const user = useRecoilValue(userState);
-  if (!user) {
-    return <pages.Login />;
-  }
+  // if (!user) {
+  // return <pages.Login />;
+  // }
 
   return (
     <Router>
@@ -42,10 +42,10 @@ export default function App() {
         <div style={{ flex: 1, display: "flex" }}>
           <Switch>
             <Route path="/datasets" component={pages.Dataset} />
-            <Route
+            {/* <Route
               path="/workspace/:datasetId/:itemId"
               component={pages.Workspace}
-            />
+            /> */}
           </Switch>
         </div>
       </div>
