@@ -16,6 +16,14 @@ export interface AnnotationBase {
   state: AnnotationState;
 }
 
+export interface BoundingBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  category: string | null;
+}
+
 export interface BoundingBoxAnnotation extends AnnotationBase {
-  boundingBoxes: [{ x: number; y: number; width: number; height: number }];
+  boundingBoxes: BoundingBox[];
 }

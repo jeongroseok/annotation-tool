@@ -1,18 +1,15 @@
 import {
   ImageDatasetItem,
-  createDataset,
   createDatasetItem,
   deleteDatasetItem,
-  getAllDatasetItems,
+  getAllDatasetItemIds,
+  getDatasetItem,
 } from "../../../services";
 import React, { useEffect, useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
 
-import { Breadcrumb } from "react-bootstrap";
-import DatasetDetailForm from "../components/DatasetDetailForm";
 import ListGroup from "react-bootstrap/ListGroup";
-import { MatchParams } from "../";
-import { useDatasetDetail } from "../hooks";
+import { combineLatest } from "rxjs";
+import { switchMap } from "rxjs/operators";
 
 function DatasetItemCreate({ datasetId }: { datasetId: string }) {
   const [url, setUrl] = useState<string>();
@@ -43,7 +40,15 @@ export default function DatasetItems({ datasetId }: { datasetId: string }) {
   const [datasetItems, setDatasetItems] = useState<ImageDatasetItem[]>();
 
   useEffect(() => {
-    getAllDatasetItems<ImageDatasetItem>(datasetId).subscribe(setDatasetItems);
+    getAllDatasetItemIds(datasetId)
+      .pipe(
+        switchMap((ids) =>
+          combineLatest(
+            ids.map((id) => getDatasetItem<ImageDatasetItem>(datasetId, id))
+          )
+        )
+      )
+      .subscribe(setDatasetItems);
   }, [datasetId]);
 
   return (

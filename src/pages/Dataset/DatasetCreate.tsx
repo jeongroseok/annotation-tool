@@ -19,7 +19,7 @@ export default function DatasetCreate() {
       <Breadcrumb>
         <Breadcrumb.Item>Home</Breadcrumb.Item>
         <Breadcrumb.Item href="/datasets">데이터셋 관리</Breadcrumb.Item>
-        <Breadcrumb.Item active>데이터셋 상세</Breadcrumb.Item>
+        <Breadcrumb.Item active>데이터셋 생성</Breadcrumb.Item>
       </Breadcrumb>
       <DatasetDetailForm defaultValues={{}} onSubmit={handleSubmit} />
     </>

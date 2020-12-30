@@ -8,9 +8,9 @@ import {
   faRulerCombined,
   faSearchPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import styled, { css } from "styled-components";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import styled from "styled-components";
 
 export const StyledDiv = styled.div`
   padding: 10px 0;
@@ -27,7 +27,8 @@ export const LeftBarItem = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${(props) => (props.selected ? "#fff" : "#aaa")};
+  color: ${(props: { selected?: boolean }) =>
+    props.selected ? "#fff" : "#aaa"};
   &:hover {
     color: #fff;
   }
@@ -39,7 +40,11 @@ export const LeftBarItem = styled.a`
   }
 `;
 
-export default function Toolbar({ onSelect }) {
+export default function Toolbar({
+  onSelect,
+}: {
+  onSelect: (text: string) => void;
+}) {
   return (
     <StyledDiv>
       <LeftBarItem style={{ justifySelf: "flex-start" }}>

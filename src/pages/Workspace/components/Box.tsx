@@ -2,18 +2,30 @@ import { Rect, Transformer } from "react-konva";
 
 import React from "react";
 
-export default function Rectangle({
-  x,
-  y,
-  width,
-  height,
+export interface Rectangle {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface BoxProps {
+  rectangle: Rectangle;
+  color: string;
+  selected: boolean;
+  onSelect?: () => void;
+  onChange?: (value: Rectangle) => void;
+}
+
+export default function Box({
+  rectangle,
   color,
   selected,
   onSelect,
   onChange,
-}) {
-  const shapeRef = React.useRef();
-  const trRef = React.useRef();
+}: BoxProps) {
+  const shapeRef = React.useRef<any>();
+  const trRef = React.useRef<any>();
 
   React.useEffect(() => {
     trRef.current.nodes([shapeRef.current]);
@@ -26,19 +38,20 @@ export default function Rectangle({
         onClick={onSelect}
         onTap={onSelect}
         ref={shapeRef}
-        x={x}
-        y={y}
-        width={width}
-        height={height}
+        x={rectangle.x}
+        y={rectangle.y}
+        width={rectangle.width}
+        height={rectangle.height}
         fill={`#${color}32`}
         draggable
         onDragEnd={(e) => {
-          onChange({
-            width,
-            height,
-            x: e.target.x(),
-            y: e.target.y(),
-          });
+          onChange &&
+            onChange({
+              width: rectangle.width,
+              height: rectangle.height,
+              x: e.target.x(),
+              y: e.target.y(),
+            });
         }}
         onTransformEnd={() => {
           const node = shapeRef.current;
@@ -47,14 +60,14 @@ export default function Rectangle({
 
           node.scaleX(1);
           node.scaleY(1);
-          onChange({
-            width,
-            height,
-            x: node.x(),
-            y: node.y(),
-            width: Math.max(5, node.width() * scaleX),
-            height: Math.max(node.height() * scaleY),
-          });
+          if (onChange) {
+            onChange({
+              x: node.x(),
+              y: node.y(),
+              width: Math.max(5, node.width() * scaleX),
+              height: Math.max(node.height() * scaleY),
+            });
+          }
         }}
       />
       <Transformer

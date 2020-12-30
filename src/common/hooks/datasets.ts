@@ -2,12 +2,14 @@ import {
   DatasetDetail,
   deleteDatasetDetail,
   getDatasetDetail,
+  getDatasetItem,
   listDatasetDetail,
   updateDatasetDetail,
-} from "../../../services";
-import { useCallback, useEffect } from "react";
+} from "../../services";
+import { useCallback, useEffect, useState } from "react";
 
-import { useLoadingValue } from "../../../common/hooks";
+import type { DatasetItemBase } from "../../services";
+import { useLoadingValue } from ".";
 
 export function useDatasetDetailList() {
   const { error, loading, setError, setValue, value } = useLoadingValue<
@@ -45,6 +47,19 @@ export function useDatasetDetail(id: string) {
     [id]
   );
   return [value, loading, error, _update, _delete] as const;
+}
+
+export function useDatasetItem<T extends DatasetItemBase>(
+  datasetId: string,
+  datasetItemId: string
+) {
+  const [datasetItem, setDatasetItem] = useState<T>();
+
+  useEffect(() => {
+    getDatasetItem<T>(datasetId, datasetItemId).subscribe(setDatasetItem);
+  }, [datasetId, datasetItemId]);
+
+  return datasetItem;
 }
 
 export function useDatasetItemList() {}

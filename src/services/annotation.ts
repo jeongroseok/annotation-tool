@@ -1,8 +1,8 @@
 import { listVal, objectVal } from "rxfire/database";
+import { map, switchMap } from "rxjs/operators";
 
 import type { AnnotationBase } from "./annotationTypes";
 import { firebase } from "./firebase";
-import { map } from "rxjs/operators";
 
 export function createAnnotation<T extends AnnotationBase>(
   annotation: Omit<T, "id" | "createdAt" | "updatedAt">
@@ -69,7 +69,7 @@ export function getAnnotation<T extends AnnotationBase>(
       .child(datasetItemId)
       .child(annotationId),
     "id"
-  ).pipe(map((value) => ({ ...value, datasetId, datasetItemId })));
+  ).pipe(map((value) => ({ ...value, datasetId, datasetItemId } as T)));
 }
 
 export function findAnnotationsByAnnotator<T extends AnnotationBase>(
@@ -88,7 +88,7 @@ export function findAnnotationsByAnnotator<T extends AnnotationBase>(
     "id"
   ).pipe(
     map((values) =>
-      values.map((value) => ({ ...value, datasetId, datasetItemId }))
+      values.map((value) => ({ ...value, datasetId, datasetItemId } as T))
     )
   );
 }
@@ -106,7 +106,7 @@ export function listAnnotation<T extends AnnotationBase>(
     "id"
   ).pipe(
     map((values) =>
-      values.map((value) => ({ ...value, datasetId, datasetItemId }))
+      values.map((value) => ({ ...value, datasetId, datasetItemId } as T))
     )
   );
 }

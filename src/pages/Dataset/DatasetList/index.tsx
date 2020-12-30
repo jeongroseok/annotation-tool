@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 import List from "./List";
-import { useDatasetDetailList } from "../hooks";
+import { useDatasetDetailList } from "../../../common/hooks";
 
 export default function DatasetList() {
   const match = useRouteMatch();

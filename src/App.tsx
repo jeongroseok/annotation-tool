@@ -42,10 +42,10 @@ export default function App() {
         <div style={{ flex: 1, display: "flex" }}>
           <Switch>
             <Route path="/datasets" component={pages.Dataset} />
-            {/* <Route
-              path="/workspace/:datasetId/:itemId"
+            <Route
+              path="/workspace/:datasetId/:datasetItemId?"
               component={pages.Workspace}
-            /> */}
+            />
           </Switch>
         </div>
       </div>

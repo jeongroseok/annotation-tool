@@ -5,7 +5,7 @@ import { Breadcrumb } from "react-bootstrap";
 import DatasetDetailForm from "../components/DatasetDetailForm";
 import DatasetItems from "./DatasetItems";
 import { MatchParams } from "../";
-import { useDatasetDetail } from "../hooks";
+import { useDatasetDetail } from "../../../common/hooks";
 
 export default function DatasetDetail() {
   const history = useHistory();
