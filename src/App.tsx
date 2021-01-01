@@ -11,9 +11,9 @@ import { userState } from "./states";
 // 게임에서 main.cpp와 동일? => service와 manager생성
 export default function App() {
   const user = useRecoilValue(userState);
-  // if (!user) {
-  // return <pages.Login />;
-  // }
+  if (!user) {
+    return <pages.Login />;
+  }
 
   return (
     <Router>
@@ -23,7 +23,7 @@ export default function App() {
         <Navbar bg="dark" variant="dark" expand="lg">
           <Container>
             <Navbar.Brand as={Link} to="/">
-              {user.username}
+              {user.username} (0포인트)
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
@@ -31,8 +31,11 @@ export default function App() {
                 <Nav.Link as={Link} to="/datasets">
                   데이터셋 관리
                 </Nav.Link>
-                <Nav.Link as={Link} to="/accounts">
-                  계정 관리
+                <Nav.Link as={Link} to="/account">
+                  계정
+                </Nav.Link>
+                <Nav.Link as={Link} to="/datasets">
+                  수익
                 </Nav.Link>
               </Nav>
             </Navbar.Collapse>
@@ -42,6 +45,7 @@ export default function App() {
         <div style={{ flex: 1, display: "flex" }}>
           <Switch>
             <Route path="/datasets" component={pages.Dataset} />
+            <Route path="/account" component={pages.Account} />
             <Route
               path="/workspace/:datasetId/:datasetItemId?"
               component={pages.Workspace}

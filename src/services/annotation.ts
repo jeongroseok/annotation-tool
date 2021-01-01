@@ -110,3 +110,16 @@ export function listAnnotation<T extends AnnotationBase>(
     )
   );
 }
+
+// list by dataset item = /annotations/$datasetId/$datasetItemId
+// export all annotations of specific dataset = /annotations/$datasetId
+// list by annotator = /annotations/$datasetId/$datasetItemId/$annotatorId (?)
+/*
+{
+  annotators-annotation: {
+    "annotator_0": {
+      "annotation_0": true
+    }
+  }
+}
+*/

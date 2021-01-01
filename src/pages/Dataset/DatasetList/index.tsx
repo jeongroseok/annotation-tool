@@ -22,6 +22,10 @@ export default function DatasetList() {
     history.push(`workspace/${item.id}`);
   }, []);
 
+  const handleReviewClick = useCallback((item) => {
+    // history.push(`workspace/${item.id}`);
+  }, []);
+
   return (
     <>
       <Breadcrumb>
@@ -36,6 +40,7 @@ export default function DatasetList() {
         items={datasetDetails}
         onEdit={handleEdit}
         onSelect={handleSelect}
+        onReviewClick={handleReviewClick}
       />
     </>
   );

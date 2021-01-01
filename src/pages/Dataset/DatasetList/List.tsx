@@ -7,8 +7,14 @@ interface ListProps {
   items: DatasetDetail[] | undefined;
   onEdit: (item: DatasetDetail) => void;
   onSelect: (item: DatasetDetail) => void;
+  onReviewClick: (item: DatasetDetail) => void;
 }
-export default function List({ items, onEdit, onSelect }: ListProps) {
+export default function List({
+  items,
+  onEdit,
+  onSelect,
+  onReviewClick,
+}: ListProps) {
   return (
     <Table className="mt-3" responsive striped bordered hover>
       <thead>
@@ -17,6 +23,7 @@ export default function List({ items, onEdit, onSelect }: ListProps) {
           <th>Description</th>
           <th>UpdatedAt</th>
           <th>CreatedAt</th>
+          <th>Rate</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -28,6 +35,7 @@ export default function List({ items, onEdit, onSelect }: ListProps) {
               item={item}
               onEdit={onEdit}
               onSelect={onSelect}
+              onReviewClick={onReviewClick}
             />
           ))}
       </tbody>
